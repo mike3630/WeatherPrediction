@@ -59,27 +59,37 @@ function INtoMM(rainInchesPerHour){
 
 // grab darksky data
 // arr - the array to store the dataset (current, past, ...)
-// yr - how many years prior to grab the data (0 -2017, 2 - 2016, ...)
-async function getData(arr, yr){
+// yr - how many years prior to grab the data (0 - 2017, 2 - 2016, ...)
+// CLEAN ME
+function getDataPromise(arr, yr){
+    return new Promise((resolve, reject) => {
+        async function buffer(){
+            let i;
 
-    let i;
+            // for past year collect a fortnight of data
+            if (yr > 0){
+                i = 14;
+            } // current year only collect last week
+            else{
+                i = 7;
+            }
 
-    // for past year collect a fortnight of data
-    if (yr > 0){
-        i = 14;
-    } // current year only collect last week
-    else{
-        i = 7;
-    }
-
-    // each day of the week
-    for (; i > 0; i--){
-        let queryUrl = url + (currTime - (day * i) - (yr * year));
-        await apiQuery(queryUrl, arr);
-    }
-    console.log(arr)
+            // each day of the week
+            for (; i > 0; i--){
+                let queryUrl = url + (currTime - (day * i) - (yr * year));
+                await apiQuery(queryUrl, arr);
+            }
+            console.log(arr)
+            return resolve();
+        }
+        buffer();
+    });
 }
 
 //current weather, current year
-getData(currWeather, 0);
-getData(lastYear, 1);
+async function getAllData(){
+    await getDataPromise(currWeather, 0);
+    await getDataPromise(lastYear, 1);
+}
+
+getAllData();
