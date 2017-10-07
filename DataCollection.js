@@ -13,12 +13,10 @@ let currTime = Math.floor(Date.now() / 1000);
 // a year / day in unix time
 let year = 31536000;
 let day = 86400;
-let currWeather = [];
-let lastYear = [];
 
 // base url for accessing the darksky api. Currently string concatenation isn't working FIXME
 let url = "https://api.darksky.net/forecast/e24c30222fa7204ca5698cfda61ffecc/45.425533,-75.692482,";
-console.log(url);
+//console.log(url);
 
 //promise to grab the mac
 function apiQuery(queryUrl, arr) {
@@ -40,7 +38,7 @@ function apiQuery(queryUrl, arr) {
                             "rainfall":INtoMM(rainfall)});
 
             //verify
-            console.log(time + ": " + hightemp + ", " + lowtemp + ", " + humidity + ", " + INtoMM(rainfall));
+            //console.log(time + ": " + hightemp + ", " + lowtemp + ", " + humidity + ", " + INtoMM(rainfall));
             return resolve();
         });
     });
@@ -61,7 +59,7 @@ function INtoMM(rainInchesPerHour){
 // arr - the array to store the dataset (current, past, ...)
 // yr - how many years prior to grab the data (0 - 2017, 2 - 2016, ...)
 // CLEAN ME
-function getDataPromise(arr, yr){
+ function getDataPromise(arr, yr){
     return new Promise((resolve, reject) => {
         async function buffer(){
             let i;
@@ -79,12 +77,15 @@ function getDataPromise(arr, yr){
                 let queryUrl = url + (currTime - (day * i) - (yr * year));
                 await apiQuery(queryUrl, arr);
             }
-            console.log(arr)
+            //console.log(arr)
             return resolve();
         }
         buffer();
     });
 }
+/* TEST CODE
+let currWeather = [];
+let lastYear = [];
 
 //current weather, current year
 async function getAllData(){
@@ -93,3 +94,5 @@ async function getAllData(){
 }
 
 getAllData();
+*/
+module.exports.getDataPromise = getDataPromise;
